@@ -23,7 +23,6 @@ def extract_assertions(sentence):
     Extracts one or more factual assertions from a sentence.
     Handles compound statements and implied claims.
     """
-    # Simple split on conjunctions for now; refine with dependency parsing later
     parts = re.split(r"\b(and|but|or|so|because|although|while|however)\b", sentence)
     assertions = [p.strip() for p in parts if len(p.strip()) > 5]
     return assertions
