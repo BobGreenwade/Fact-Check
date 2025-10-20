@@ -27,6 +27,7 @@ def generate_fact_response(verification_result):
     """
     Generates editorial phrasing based on verification result.
     Placeholder logic; refine with tone engine and persona voice.
+    Consider migrating to editorialPhrasing.py for consistency.
     """
     result = verification_result["result"]
     confidence = verification_result["confidence"]
