@@ -18,7 +18,6 @@ Modular validator for textual assertions. Accepts a stream of text, extracts cla
 | `editorialPhrasing.py` | Crafts tone-aware phrasing for confirmation, refutation, and hedging |
 | `location.py` | Resolves user location for editorial routing and fallback logic |
 | `paraphrase.py` | Persona-aware paraphrasing using LLM prompt construction |
-| `registry.py` | Stores known facts and trusted sources |
 | `registryEditor.py` | Manages source registry metadata including reliability and bias |
 | `segmentText.py` | Splits text into sentences and extracts assertions |
 | `selectMachineLearning.py` | Detects available ML packages and routes tasks accordingly |
