@@ -8,50 +8,77 @@ Drafted collaboratively with Copilot and Bob Greenwade.
 
 import re
 
-# Placeholder for ML integration
 def detect_fallacies(text):
     """
     Detects common logical fallacies in the input text.
-    Returns a list of fallacy tags and brief explanations.
+    Returns list of fallacy tags with weights and explanations.
     """
     fallacies = []
-    # Example stub logic
-    if "everyone knows" in text.lower():
-        fallacies.append(("Appeal to Popularity", "Claim relies on consensus rather than evidence."))
-    if "if we don't act now" in text.lower():
-        fallacies.append(("False Dilemma", "Presents only two options when more exist."))
+    lowered = text.lower()
+
+    if "everyone knows" in lowered:
+        fallacies.append({
+            "type": "Appeal to Popularity",
+            "explanation": "Claim relies on consensus rather than evidence.",
+            "weight": 0.6
+        })
+    if "if we don't act now" in lowered:
+        fallacies.append({
+            "type": "False Dilemma",
+            "explanation": "Presents only two options when more exist.",
+            "weight": 0.7
+        })
+
     return fallacies
 
 def detect_contradictions(text, known_facts):
     """
     Compares input text against known facts to flag contradictions.
-    Returns contradiction tags and suggested corrections.
+    Returns list of contradictions with severity scores.
     """
     contradictions = []
-    # Example stub logic
+    lowered = text.lower()
+
     for fact in known_facts:
-        if fact.lower() in text.lower():
+        fact_lower = fact.lower()
+        if fact_lower in lowered:
             continue
-        if "not " + fact.lower() in text.lower():
-            contradictions.append((fact, "Contradicts known fact."))
+        if "not " + fact_lower in lowered:
+            contradictions.append({
+                "fact": fact,
+                "explanation": "Contradicts known fact.",
+                "severity": 0.8
+            })
+
     return contradictions
 
 def tag_rhetorical_misdirection(text):
     """
-    Flags rhetorical devices that obscure logic (e.g., loaded language, red herrings).
-    Returns editorial tags for phrasing review.
+    Flags rhetorical devices that obscure logic.
+    Returns list of editorial tags with sabotage potential.
     """
     tags = []
-    if "clearly" in text.lower():
-        tags.append(("Loaded Language", "Implies certainty without justification."))
-    if "some say" in text.lower():
-        tags.append(("Vague Attribution", "Avoids source responsibility."))
+    lowered = text.lower()
+
+    if "clearly" in lowered:
+        tags.append({
+            "type": "Loaded Language",
+            "explanation": "Implies certainty without justification.",
+            "sabotage_score": 0.5
+        })
+    if "some say" in lowered:
+        tags.append({
+            "type": "Vague Attribution",
+            "explanation": "Avoids source responsibility.",
+            "sabotage_score": 0.4
+        })
+
     return tags
 
 def evaluate_logic(text, known_facts=None):
     """
     Main entry point for logic evaluation.
-    Returns a structured report of fallacies, contradictions, and rhetorical tags.
+    Returns structured report with fallacies, contradictions, and rhetorical tags.
     """
     known_facts = known_facts or []
     return {
