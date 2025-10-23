@@ -51,3 +51,14 @@ def apply_persona_tone(text, persona="default"):
     """
     # For now, return text unchanged
     return text
+
+def phrase_by_score(assertion, truth_score, certainty_score, persona="default"):
+    """
+    Generates editorial phrasing based on fluid truth and certainty scores.
+    """
+    if truth_score >= 0.85:
+        return phrase_confirmation(assertion, certainty_score, persona)
+    elif truth_score <= 0.15:
+        return phrase_refutation(assertion, certainty_score, persona)
+    else:
+        return phrase_hedge(assertion, certainty_score, persona)
