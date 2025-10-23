@@ -1,52 +1,48 @@
 """
 topicClassifier.py — Classifies assertions by topic/domain
 
-Supports editorial routing, source selection, and tone-aware tagging.
+Uses topic_tree.json for dynamic classification, editorial routing, and sensitivity tagging.
 Drafted collaboratively with Copilot and Bob Greenwade.
 """
 
+import json
+import os
+
+TOPIC_TREE_PATH = "topic_tree.json"
+
+def load_topic_tree(path=TOPIC_TREE_PATH):
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 def classify_topic(assertion):
     """
-    Returns one or more topic tags for the given assertion.
-    Placeholder logic; refine with ML or rule-based classifier.
+    Returns topic tags with confidence scores based on keyword matches.
     """
-    keywords = {
-        "politics": ["president", "election", "congress", "senator", "policy"],
-        "science": ["gravity", "atom", "experiment", "physics", "biology"],
-        "history": ["war", "treaty", "empire", "revolution", "historical"],
-        "health": ["disease", "symptom", "treatment", "vaccine", "mental health"],
-        "technology": ["AI", "software", "internet", "device", "algorithm"],
-        "culture": ["movie", "music", "celebrity", "art", "fashion"],
-        "finance": ["stock", "market", "inflation", "interest rate", "economy"]
-    }
-
+    tree = load_topic_tree()
     lowered = assertion.lower()
-    matched_topics = []
-    for topic, terms in keywords.items():
-        if any(term in lowered for term in terms):
-            matched_topics.append(topic)
+    topic_scores = {}
 
-    return matched_topics if matched_topics else ["general"]
+    for topic, metadata in tree.items():
+        keywords = metadata.get("keywords", [])
+        hits = sum(1 for term in keywords if term.lower() in lowered)
+        if hits:
+            score = round(min(1.0, hits / len(keywords)), 2)
+            topic_scores[topic] = score
+
+    return topic_scores if topic_scores else {"general": 0.1}
 
 def route_to_source_cluster(topic):
     """
-    Maps topic to source registry cluster.
-    Placeholder logic; refine with registry metadata.
+    Maps topic to source registry cluster using topic tree metadata.
     """
-    cluster_map = {
-        "politics": "gov_sources",
-        "science": "peer_reviewed",
-        "history": "academic",
-        "health": "medical",
-        "technology": "tech_news",
-        "culture": "media",
-        "finance": "financial"
-    }
-    return cluster_map.get(topic, "general")
+    tree = load_topic_tree()
+    return tree.get(topic, {}).get("source_cluster", "general")
 
 def flag_sensitive_topic(topic):
     """
     Flags topics that require editorial caution.
     """
-    sensitive = ["politics", "health", "finance"]
-    return topic in sensitive
+    tree = load_topic_tree()
+    return tree.get(topic, {}).get("sensitive", False)
