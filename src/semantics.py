@@ -80,6 +80,20 @@ def detect_euphemism(text):
 
     return match
 
+def semantic_distance(text1, text2):
+    """
+    Returns a float score representing conceptual drift between two phrases.
+    0.0 = identical, 1.0 = completely unrelated.
+    """
+    try:
+        ml_result = run_learning("semantic_distance", {
+            "text1": text1,
+            "text2": text2
+        })
+        return round(ml_result.get("output", {}).get("distance", 0.5), 2)
+    except Exception:
+        return 0.5
+
 def classify_reality_mode(text):
     """
     Returns a tag for editorial reality mode.
