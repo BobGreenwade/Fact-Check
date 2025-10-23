@@ -73,3 +73,23 @@ def should_prompt_for_location(config=None):
     """
     fallback = config.get("location_fallback", "ask") if config else "ask"
     return fallback == "ask"
+
+def score_location_trust(location):
+    """
+    Assigns a trust score to the resolved location.
+    Placeholder logic; refine with geopolitical metadata or source density.
+    """
+    if location["country"] == "US":
+        return 0.9
+    elif location["country"] in ["RU", "CN", "IR"]:
+        return 0.5  # example: lower trust due to censorship risk
+    else:
+        return 0.7
+
+def update_location_profile(location, result_summary):
+    """
+    Updates internal profile of location-based editorial patterns.
+    Placeholder for future learning or analytics.
+    """
+    # Example: increment counts of confirmed/refuted/uncertain
+    pass
