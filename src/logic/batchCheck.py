@@ -2,6 +2,7 @@
 batchCheck.py — Processes multiple assertions in sequence
 
 Runs full fact-check pipeline on multi-claim input and returns structured results.
+Now includes batch-level editorial consistency scoring via batchInvariant.py.
 Drafted collaboratively with Copilot and Bob Greenwade.
 """
 
@@ -10,17 +11,21 @@ from topicClassifier import classify_topic, route_to_source_cluster
 from sourceSelector import evaluate_source_viability, select_source_type
 from checkFact import verify_assertion, generate_fact_response
 from editorialPhrasing import phrase_confirmation, phrase_refutation, phrase_hedge
+from batchInvariant import summarize_batch_invariants
 
-def process_batch(text, persona="default"):
+def process_batch(text, persona="default", semantic_distance_fn=None):
     """
     Processes a block of text through the full fact-check pipeline.
-    Returns list of structured editorial responses.
+    Returns list of structured editorial responses and batch-level summary.
     """
     responses = []
+    assertions = []
     sentences = split_into_sentences(text)
+
     for sentence_index, sentence in enumerate(sentences):
-        assertions = extract_assertions(sentence)
-        for assertion in assertions:
+        extracted = extract_assertions(sentence)
+        for assertion in extracted:
+            assertions.append(assertion)
             assertion_type = tag_assertion_type(assertion)
             topic = classify_topic(assertion)
             if not evaluate_source_viability(assertion_type, topic):
@@ -47,7 +52,13 @@ def process_batch(text, persona="default"):
                 "main_source": source_type,
                 "phrasing": phrasing
             })
-    return responses
+
+    batch_summary = summarize_batch_invariants(responses, assertions, semantic_distance_fn) if semantic_distance_fn else None
+
+    return {
+        "responses": responses,
+        "batch_summary": batch_summary
+    }
 
 def summarize_results(responses):
     """
