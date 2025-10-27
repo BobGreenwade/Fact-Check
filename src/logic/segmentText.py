@@ -2,12 +2,15 @@
 segmentText.py — Breaks input into sentences and extracts assertions
 
 Supports editorial parsing, compound statement handling, and assertion tagging.
+Now includes ML-ready assertion typing and expansion hooks.
 Drafted collaboratively with Copilot and Bob Greenwade.
 """
 
 import re
 import nltk
 from nltk.tokenize import sent_tokenize
+from batchInvariant import run_deterministic_inference
+from selectMachineLearning import ml_select_package
 
 nltk.download("punkt", quiet=True)
 
@@ -19,6 +22,10 @@ def split_into_sentences(text):
     return sent_tokenize(text)
 
 def extract_assertions(sentence):
+    """
+    Extracts individual assertions from compound sentence.
+    Expands compound subjects into separate claims.
+    """
     parts = re.split(r"\b(?:and|but|or|so|because|although|while|however)\b", sentence, flags=re.IGNORECASE)
     assertions = [p.strip() for p in parts if len(p.strip()) > 5]
 
@@ -30,20 +37,37 @@ def extract_assertions(sentence):
 def tag_assertion_type(assertion):
     """
     Tags assertion as factual, speculative, opinion, or question.
-    Placeholder logic; refine with ML or rule-based classifier.
+    Uses keyword heuristics; future upgrade to ML classifier.
     """
     speculative_keywords = ["might", "could", "possibly", "maybe", "i think", "it seems"]
     opinion_keywords = ["i believe", "in my opinion", "i feel", "should", "ought"]
+    question_keywords = ["who", "what", "why", "how", "when", "where"]
 
     lowered = assertion.lower()
+    scores = {
+        "factual": 0.85,
+        "speculative": 0.0,
+        "opinion": 0.0,
+        "question": 0.0
+    }
+
+    for kw in speculative_keywords:
+        if kw in lowered:
+            scores["speculative"] += 0.2
+            scores["factual"] -= 0.1
+    for kw in opinion_keywords:
+        if kw in lowered:
+            scores["opinion"] += 0.2
+            scores["factual"] -= 0.1
+    for kw in question_keywords:
+        if lowered.startswith(kw) or lowered.endswith("?"):
+            scores["question"] += 0.5
+            scores["factual"] -= 0.2
+
+    best_type = max(scores, key=scores.get)
     return {
-        "type": "factual",
-        "scores": {
-            "factual": 0.85,
-            "speculative": 0.1,
-            "opinion": 0.05,
-            "question": 0.0
-        }
+        "type": best_type,
+        "scores": {k: round(v, 2) for k, v in scores.items()}
     }
 
 def expand_entity_assertions(assertion):
