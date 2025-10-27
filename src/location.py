@@ -7,6 +7,13 @@ Drafted collaboratively with Copilot and Bob Greenwade.
 
 import os
 import requests
+from editors.configEditor import get_config_value
+
+def should_prompt_for_location(config=None):
+    fallback = config.get("location_fallback", None) if config else None
+    if not fallback:
+        fallback = get_config_value("LOCATION_FALLBACK", "ask")
+    return fallback == "ask"
 
 def check_location_permission():
     """
@@ -67,22 +74,14 @@ def resolve_location(config=None):
     else:
         return None
 
-def should_prompt_for_location(config=None):
-    """
-    Determines whether to prompt user for manual location.
-    """
-    fallback = config.get("location_fallback", "ask") if config else "ask"
-    return fallback == "ask"
-
 def score_location_trust(location):
-    """
-    Assigns a trust score to the resolved location.
-    Placeholder logic; refine with geopolitical metadata or source density.
-    """
-    if location["country"] == "US":
+    country = location.get("country", "")
+    if country == "US":
         return 0.9
-    elif location["country"] in ["RU", "CN", "IR"]:
-        return 0.5  # example: lower trust due to censorship risk
+    elif country in ["RU", "CN", "IR"]:
+        return 0.5
+    elif country in ["DE", "FR", "JP", "CA"]:
+        return 0.85
     else:
         return 0.7
 
@@ -91,5 +90,5 @@ def update_location_profile(location, result_summary):
     Updates internal profile of location-based editorial patterns.
     Placeholder for future learning or analytics.
     """
-    # Example: increment counts of confirmed/refuted/uncertain
+    # Example: log to analytics.json or registry
     pass
