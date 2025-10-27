@@ -1,4 +1,3 @@
-```python
 """
 transcript.py — Context-aware transcript logging for DLI
 
@@ -9,6 +8,9 @@ Drafted collaboratively with Copilot.
 import os
 import json
 from datetime import datetime
+from editors.configEditor import get_config_value
+
+BUFFER_SIZE = get_config_value("TRANSCRIPT_CONTEXT_BUFFER_SIZE", 10)
 
 # Load config
 def load_config(path="config.json"):
@@ -56,7 +58,12 @@ def save_transcript(username="User"):
     filename = f"{username}_{timestamp}.txt"
 
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(f"Transcript triggered by: {transcript_trigger}\n\n")
+        # 🧠 Transcript metadata block
+        f.write(f"Transcript triggered by: {transcript_trigger}\n")
+        f.write(f"Timestamp: {timestamp}\n")
+        f.write(f"Buffer size: {BUFFER_SIZE}\n\n")
+
+        # 🗒️ Transcript entries
         for entry in transcript_log:
             line = f"{entry['speaker']}: {entry['text']}"
             if entry["metadata"]:
@@ -64,7 +71,7 @@ def save_transcript(username="User"):
             f.write(line + "\n")
 
     print(f"[TRANSCRIPT] Saved to {filename}")
-    log_transcript_creation(filename, transcript_trigger)  # See below
+    log_transcript_creation(filename, transcript_trigger)
     reset_transcript()
     return filename
 
@@ -80,3 +87,10 @@ def log_transcript_creation(filename, trigger):
     Placeholder for future registry or dashboard.
     """
     print(f"[TRANSCRIPT] Logged creation: {filename} via {trigger}")
+
+def get_transcript_summary():
+    return {
+        "trigger": transcript_trigger,
+        "length": len(transcript_log),
+        "speakers": list(set(entry["speaker"] for entry in transcript_log))
+    }
