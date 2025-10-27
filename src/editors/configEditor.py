@@ -43,3 +43,18 @@ def reset_config():
     }
     save_config(default_config)
     return default_config
+
+def describe_config():
+    config = load_config()
+    return {
+        "persona": config.get("DEFAULT_PERSONA", "default"),
+        "tone": config.get("EDITORIAL_TONE", "neutral"),
+        "routing": config.get("ML_ROUTING_MODE", "score_based"),
+        "sabotage": config.get("ENABLE_SABOTAGE_TAGGING", True),
+        "euphemism": config.get("ENABLE_EUPHEMISM_DETECTION", True),
+        "trust_threshold": config.get("TRUST_THRESHOLD", 0.75)
+    }
+
+def config_exists(path=CONFIG_PATH):
+    return os.path.exists(path)
+    
