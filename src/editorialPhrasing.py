@@ -106,3 +106,32 @@ def apply_persona_tone(text, persona="default"):
     """
     # For now, return text unchanged
     return text
+
+def generate_batch_summary_phrase(responses, persona="default"):
+    """
+    Generates a symbolic editorial summary of batch results.
+    Returns a persona-tuned phrasing string.
+    """
+    total = len(responses)
+    confirmed = sum(1 for r in responses if r["style"] == "confirmation")
+    refuted = sum(1 for r in responses if r["style"] == "refutation")
+    uncertain = total - confirmed - refuted
+
+    if total == 0:
+        base = "There were no clear assertions to check."
+    elif confirmed == total:
+        base = "Everything checks out—solid logic across the board."
+    elif refuted == total:
+        base = "None of the claims held up—might want to rethink the premise."
+    elif confirmed > refuted and refuted == 0:
+        base = "Most of what you said is right, with a few uncertainties."
+    elif refuted > 0 and confirmed == 0:
+        base = "That would be good logic, except for one early error that unraveled the rest."
+    elif refuted == 1 and confirmed >= 2:
+        base = "Nearly everything checks out—just one claim didn’t hold up."
+    elif confirmed == 1 and refuted >= 2:
+        base = "There’s one solid claim, but the rest need a second look."
+    else:
+        base = f"Mixed results: {confirmed} confirmed, {refuted} refuted, {uncertain} uncertain."
+
+    return apply_persona_tone(base, persona)
