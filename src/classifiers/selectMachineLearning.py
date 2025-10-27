@@ -1,7 +1,7 @@
 """
 selectMachineLearning.py — Detects and selects available ML packages
 
-Supports modular fallback and package-specific routing.
+Supports modular fallback, score-based selection, and future ML routing.
 Drafted collaboratively with Copilot and Bob Greenwade.
 """
 
@@ -26,22 +26,6 @@ def check_installed_packages():
         except ImportError:
             continue
     return available
-
-def select_best_package(task="classification"):
-    available = check_installed_packages()
-    if task == "classification":
-        for preferred in ["transformers", "spacy", "sklearn"]:
-            if preferred in available:
-                return preferred
-    elif task == "parsing":
-        for preferred in ["spacy", "nltk"]:
-            if preferred in available:
-                return preferred
-    elif task == "tone":
-        for preferred in ["textblob", "transformers"]:
-            if preferred in available:
-                return preferred
-    return None
 
 def score_package_for_task(pkg, task):
     """
@@ -71,7 +55,7 @@ def select_best_package(task="classification"):
     scored.sort(key=lambda x: x[1], reverse=True)
     return scored[0][0] if scored else None
 
-def ml_select_package(task, context_features):
+def ml_select_package(task, context_features=None):
     """
     Placeholder for ML-based package selection.
     Could use decision trees, embeddings, or reinforcement learning.
