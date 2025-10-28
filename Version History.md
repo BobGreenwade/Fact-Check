@@ -4,6 +4,31 @@ Last updated: 2025-10-23
 
 ---
 
+## v0.0.3 — Frame  
+**Date:** 2025-10-27  
+**Status:** Editorially consistent, batch-aware, and ready for multimodal synthesis
+
+### 🔧 Modules Enhanced or Added
+- `batchCheck.py` — Returns structured responses and batch-level editorial summary
+- `checkFact.py` — Refactored for ML-based verification and batch-invariant inference
+- `checkLogic.py` — Expanded with sabotage scoring and ML hooks
+- `segmentText.py` — Assertion tagging and compound expansion logic refined
+- `editorialPhrasing.py` — Persona-aware phrasing and batch summary generation
+- `batchInvariant.py` — New module for semantic drift scoring, verdict harmony, and deterministic ML inference
+
+### 🧠 Editorial Enhancements
+- Batch-level consistency scoring and symbolic summary phrasing
+- ML-ready assertion typing and semantic similarity scaffolding
+- Deterministic inference via `batch_invariant_ops`
+- Persona-aware phrasing for confirmation, refutation, and hedging
+- Compound subject expansion and sabotage detection
+
+### 🔮 Future Integration Hooks
+- Image, video, and media analysis modules for multimodal synthesis
+- Dashboard modules (`glyphAudit.py`, `trustDashboard.py`) for editorial visualization
+
+---
+
 ## v0.0.2 — Foundation  
 **Date:** 2025-10-23  
 **Status:** Stable editorial core, ready for ML integration and modular expansion
