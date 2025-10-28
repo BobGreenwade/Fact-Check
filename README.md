@@ -49,11 +49,6 @@ Modular validator for textual assertions. Accepts a stream of text, extracts cla
 | `integrateAnalysis.py` | Synthesizes multimodal analysis for editorial verdicts  
 | `segmentText.py` | Splits text into sentences and extracts assertions  
 
-## 🗃️ JSON Configuration
-
-- `source_registry.json` — Trusted sources with reliability, bias, tone, and notes  
-- `topic_tree.json` — Topic definitions, keywords, source clusters, and sensitivity flags  
-
 ## 🔮 Future Enhancements
 
 - Integrate logical fallacy taxonomy from [logicalfallacies.org](https://logicalfallacies.org) into `checkLogic.py`  
